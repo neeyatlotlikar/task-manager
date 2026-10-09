@@ -1,0 +1,14 @@
+[project]
+name = "karyasoft"
+version = "0.1.0"
+requires-python = ">=3.14"
+dependencies = [
+    "django==6.1",
+    "python-dotenv>=1.2.4",
+]
+
+[dependency-groups]
+dev = [
+    "isort>=9.0.2",
+    "ruff>=0.16.10",
+]
