@@ -19,6 +19,7 @@ from django.contrib import admin
 from django.urls import include, path
 
 urlpatterns = [
-    path("", include("tickets.urls")),
+    # TODO: Authentication URLs like login will be the root
+    path("tickets/", include("tickets.urls")),
     path("admin/", admin.site.urls),
 ]

@@ -1,0 +1,32 @@
+{% extends "tickets/base.html" %}
+
+{% block title %}Tickets — Karyasoft{% endblock %}
+
+{% block content %}
+<h2>Tickets</h2>
+
+{% if tickets %}
+<section>
+    {% for ticket in tickets %}
+    <article class="ticket-card">
+        <h2>
+            <a href="{% url 'tickets:ticket_detail' ticket.pk %}">
+                {{ ticket.title }}
+            </a>
+        </h2>
+
+        <p>{{ ticket.description }}</p>
+
+        <div class="ticket-meta">
+            <span>{{ ticket.status }}</span>
+        </div>
+
+    </article>
+    {% empty %}
+    <p>No tickets found.</p>
+    {% endfor %}
+</section>
+{% else %}
+<p>No tickets yet.</p>
+{% endif %}
+{% endblock %}

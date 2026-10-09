@@ -11,9 +11,7 @@ class SupportTicketsAdmin(admin.ModelAdmin):
         "created_at",
         "updated_at",
     )
-    list_filter = (
-        "status",
-    )
+    list_filter = ("status",)
     search_fields = (
         "title",
         "description",

@@ -1,0 +1,28 @@
+{% extends "tickets/base.html" %} {% block title %}{{ ticket.title }} — Karyasoft{% endblock %} {% block content %}
+<article>
+    <header>
+        <h2>{{ ticket.title }}</h2>
+
+        <p>{{ ticket.description|linebreaks }}</p>
+    </header>
+
+    <section>
+        <h3>Ticket Information</h3>
+
+        <dl>
+            <dt>Status</dt>
+            <dd>{{ ticket.status }}</dd>
+
+            <dt>Added</dt>
+            <dd>{{ ticket.created_at|date:"d M Y, H:i" }}</dd>
+
+            <dt>Last updated</dt>
+            <dd>{{ ticket.updated_at|date:"d M Y, H:i" }}</dd>
+        </dl>
+    </section>
+
+    <p>
+        <a href="{% url 'tickets:tickets' %}"> ← Back to tickets </a>
+    </p>
+</article>
+{% endblock %}

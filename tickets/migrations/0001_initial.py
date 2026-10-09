@@ -4,22 +4,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='SupportTicket',
+            name="SupportTicket",
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('title', models.CharField(max_length=200)),
-                ('description', models.TextField(verbose_name='Details about the ticket')),
-                ('status', models.CharField(choices=[('todo', 'To-Do'), ('inprogress', 'In Progress'), ('onhold', 'On hold'), ('completed', 'Completed')], max_length=20)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
-                ('updated_at', models.DateTimeField(auto_now=True)),
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("title", models.CharField(max_length=200)),
+                (
+                    "description",
+                    models.TextField(verbose_name="Details about the ticket"),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        choices=[
+                            ("todo", "To-Do"),
+                            ("inprogress", "In Progress"),
+                            ("onhold", "On hold"),
+                            ("completed", "Completed"),
+                        ],
+                        max_length=20,
+                    ),
+                ),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
             ],
         ),
     ]
