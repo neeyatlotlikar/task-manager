@@ -29,7 +29,7 @@ def login_view(request):
             )
             if user is not None:
                 login(request, user)
-                return redirect("task-list")
+                return redirect("tickets")
             form.add_error(None, "Invalid username or password.")
     else:
         form = LoginForm()
