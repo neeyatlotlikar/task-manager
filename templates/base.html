@@ -13,10 +13,12 @@
     {% if request.environ.DEBUG == "True" %}
     <!-- Development-only Tailwind browser build -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
     {% endif %}
 </head>
 
-<body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100">
+<body class="min-h-full bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100"
+    hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
 
     <header class="border-b border-slate-200 dark:border-slate-800">
         <div class="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
