@@ -18,8 +18,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import include, path
 
+from tickets.views import index
+
 urlpatterns = [
-    # TODO: Authentication URLs like login will be the root
+    path("", index, name="index"),
+    path("accounts/", include("accounts.urls")),
     path("tickets/", include("tickets.urls")),
     path("admin/", admin.site.urls),
 ]

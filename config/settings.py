@@ -137,3 +137,4 @@ MAILERS = {
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "tickets"
 LOGOUT_REDIRECT_URL = "login"
+AUTH_USER_MODEL = "accounts.User"

@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404, render
+from django.contrib.auth.decorators import login_required
 from .models import SupportTicket
 
 
@@ -11,6 +12,7 @@ def index(request):
     )
 
 
+@login_required
 def tickets(request):
     all_tickets = SupportTicket.objects.all().order_by("-created_at")
     return render(
@@ -22,6 +24,7 @@ def tickets(request):
     )
 
 
+@login_required
 def ticket_detail(request, pk):
     ticket = get_object_or_404(SupportTicket, pk=pk)
 

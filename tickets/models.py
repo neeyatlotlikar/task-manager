@@ -1,20 +1,26 @@
 from django.db import models
-
-
-class TicketStatus(models.TextChoices):
-    todo = "todo", "To-Do"
-    inprogress = "inprogress", "In Progress"
-    onhold = "onhold", "On hold"
-    completed = "completed", "Completed"
+from config import settings
 
 
 class SupportTicket(models.Model):
+    TICKET_STATUS_CHOICES = (
+        ("todo", "To-Do"),
+        ("inprogress", "In Progress"),
+        ("onhold", "On hold"),
+        ("completed", "Completed"),
+    )
+
     title = models.CharField(max_length=200)
-    # TODO: assigned_to = User()
+    assigned_to = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        default=None,
+    )
     description = models.TextField("Details about the ticket")
     status = models.CharField(
         max_length=20,
-        choices=TicketStatus,
+        choices=TICKET_STATUS_CHOICES,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
