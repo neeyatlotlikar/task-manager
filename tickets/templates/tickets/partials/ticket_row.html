@@ -8,9 +8,9 @@
 
   <td class="px-4 py-3">
     <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium
-      {% if ticket.status == 'done' %}
+      {% if ticket.status == 'completed' %}
         bg-green-100 text-green-800
-      {% elif ticket.status == 'in_progress' %}
+      {% elif ticket.status == 'inprogress' %}
         bg-amber-100 text-amber-800
       {% else %}
         bg-slate-100 text-slate-700
@@ -20,7 +20,7 @@
   </td>
 
   <td class="px-4 py-3 text-sm">
-    {{ ticket.due_date|date:"d M Y"|default:"—" }}
+    {{ ticket.updated_at|date:"d M Y"|default:"—" }}
   </td>
 
   <td class="px-4 py-3 text-right">
