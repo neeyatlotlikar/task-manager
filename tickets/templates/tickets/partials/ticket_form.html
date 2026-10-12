@@ -1,0 +1,34 @@
+<form hx-post="{% url 'tickets:ticket-create' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+    class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+
+    {% csrf_token %}
+
+    {% if form.non_field_errors %}
+    <div class="mb-4 rounded-md bg-red-50 p-3 text-sm text-red-700">
+        {{ form.non_field_errors }}
+    </div>
+    {% endif %}
+
+    <div class="space-y-4">
+        {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {% if field.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ field.errors.0 }}</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-6 flex gap-3">
+        <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+            Save
+        </button>
+
+        <button type="button" hx-get="{% url 'tickets:ticket-list' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+            class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
+            Cancel
+        </button>
+    </div>
+</form>

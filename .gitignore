@@ -221,3 +221,4 @@ __marimo__/
 
 # Tailwind CSS
 node_modules/
+staticfiles/

@@ -1,32 +1,30 @@
 {% extends "base.html" %}
 
-{% block title %}Tickets — Karyasoft{% endblock %}
-
 {% block content %}
-<h2>Tickets</h2>
+<div class="flex items-center justify-between">
+    <h1 class="text-2xl font-bold">Tickets</h1>
 
-{% if tickets %}
-<section>
-    {% for ticket in tickets %}
-    <article class="ticket-card">
-        <h2>
-            <a href="{% url 'tickets:ticket-detail' ticket.pk %}">
-                {{ ticket.title }}
-            </a>
-        </h2>
+    <button hx-get="{% url 'tickets:ticket-create' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+        class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+        New ticket
+    </button>
+</div>
 
-        <p>{{ ticket.description }}</p>
+<div id="ticket-form-container" class="mt-6"></div>
 
-        <div class="ticket-meta">
-            <span>{{ ticket.status }}</span>
-        </div>
-
-    </article>
-    {% empty %}
-    <p>No tickets found.</p>
-    {% endfor %}
-</section>
-{% else %}
-<p>No tickets yet.</p>
-{% endif %}
+<div class="mt-6 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
+    <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
+        <thead class="bg-slate-100 dark:bg-slate-800">
+            <tr>
+                <th class="px-4 py-3 text-left text-sm font-semibold">Ticket</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold">Status</th>
+                <th class="px-4 py-3 text-left text-sm font-semibold">Due</th>
+                <th class="px-4 py-3"></th>
+            </tr>
+        </thead>
+        <tbody id="ticket-rows" class="divide-y divide-slate-200 dark:divide-slate-700">
+            {% include "tickets/partials/ticket_list_items.html" %}
+        </tbody>
+    </table>
+</div>
 {% endblock %}

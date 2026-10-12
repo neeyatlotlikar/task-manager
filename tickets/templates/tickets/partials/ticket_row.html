@@ -1,0 +1,42 @@
+<tr id="ticket-{{ ticket.pk }}" class="bg-white dark:bg-slate-900">
+  <td class="px-4 py-3">
+    <a href="{% url 'tickets:ticket-detail' ticket.pk %}" class="font-medium hover:underline">
+      {{ ticket.title }}
+    </a>
+    <p class="text-sm text-slate-500">{{ ticket.project.name }}</p>
+  </td>
+
+  <td class="px-4 py-3">
+    <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium
+      {% if ticket.status == 'done' %}
+        bg-green-100 text-green-800
+      {% elif ticket.status == 'in_progress' %}
+        bg-amber-100 text-amber-800
+      {% else %}
+        bg-slate-100 text-slate-700
+      {% endif %}">
+      {{ ticket.get_status_display }}
+    </span>
+  </td>
+
+  <td class="px-4 py-3 text-sm">
+    {{ ticket.due_date|date:"d M Y"|default:"—" }}
+  </td>
+
+  <td class="px-4 py-3 text-right">
+    {% if perms.tickets.change_ticket %}
+    <button hx-get="{% url 'tickets:ticket-update' ticket.pk %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+      class="rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800">
+      Edit
+    </button>
+    {% endif %}
+
+    {% if perms.tickets.delete_ticket %}
+    <button hx-delete="{% url 'tickets:ticket-delete' ticket.pk %}" hx-confirm="Delete “{{ ticket.title }}”?"
+      hx-target="#ticket-{{ ticket.pk }}" hx-swap="outerHTML"
+      class="ml-2 rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
+      Delete
+    </button>
+    {% endif %}
+  </td>
+</tr>
