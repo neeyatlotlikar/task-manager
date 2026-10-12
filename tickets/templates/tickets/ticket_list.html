@@ -1,4 +1,4 @@
-{% extends "tickets/base.html" %}
+{% extends "base.html" %}
 
 {% block title %}Tickets — Karyasoft{% endblock %}
 
@@ -10,7 +10,7 @@
     {% for ticket in tickets %}
     <article class="ticket-card">
         <h2>
-            <a href="{% url 'tickets:ticket_detail' ticket.pk %}">
+            <a href="{% url 'tickets:ticket-detail' ticket.pk %}">
                 {{ ticket.title }}
             </a>
         </h2>

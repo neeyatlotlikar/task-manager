@@ -3,21 +3,12 @@ from django.contrib.auth.decorators import login_required
 from .models import SupportTicket
 
 
-def index(request):
-    return render(
-        request,
-        "tickets/index.html",
-        content_type="text/html",
-        status=200,
-    )
-
-
 @login_required
-def tickets(request):
+def ticket_list(request):
     all_tickets = SupportTicket.objects.all().order_by("-created_at")
     return render(
         request,
-        "tickets/tickets.html",
+        "tickets/ticket_list.html",
         {"tickets": all_tickets},
         content_type="text/html",
         status=200,

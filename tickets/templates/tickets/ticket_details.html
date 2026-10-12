@@ -1,4 +1,4 @@
-{% extends "tickets/base.html" %} {% block title %}{{ ticket.title }} — Karyasoft{% endblock %} {% block content %}
+{% extends "base.html" %} {% block title %}{{ ticket.title }} — Karyasoft{% endblock %} {% block content %}
 <article>
     <header>
         <h2>{{ ticket.title }}</h2>
@@ -22,7 +22,7 @@
     </section>
 
     <p>
-        <a href="{% url 'tickets:tickets' %}"> ← Back to tickets </a>
+        <a href="{% url 'tickets:ticket-list' %}"> ← Back to tickets </a>
     </p>
 </article>
 {% endblock %}
