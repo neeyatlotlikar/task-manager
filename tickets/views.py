@@ -1,10 +1,12 @@
 from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required, permission_required
+from django.http import HttpResponse
 from .forms import SupportTicketForm
 from .models import SupportTicket
 
 
 def is_htmx(request):
+    print(f"Checking if request is HTMX: {request.headers.get('HX-Request')}")
     return request.headers.get("HX-Request") == "true"
 
 
@@ -19,28 +21,46 @@ def ticket_list(request):
 
 
 @login_required
-@permission_required("tickets.add_ticket", raise_exception=True)
-def ticket_create(request):
+@permission_required(["tickets.add_ticket", "tickets.change_ticket"], raise_exception=True)
+def ticket_create_or_update(request, pk=None):
+    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user) if pk else None
+    
     if request.method == "POST":
-        form = SupportTicketForm(request.POST)
+        if ticket:
+            form = SupportTicketForm(request.POST, instance=ticket)
 
-        if form.is_valid():
-            ticket = form.save(commit=False)
-            ticket.created_by = request.user
-            ticket.save()
+            if form.is_valid():
+                form.save()
 
-            if is_htmx(request):
-                tickets = SupportTicket.objects.filter(assigned_to=request.user)
-                return render(
-                    request,
-                    "tickets/partials/ticket_list_items.html",
-                    {"tickets": tickets},
-                )
+                if is_htmx(request):
+                    return render(
+                        request,
+                        "tickets/partials/ticket_row.html",
+                        {"ticket": ticket},
+                    )
+                
+                return HttpResponse(status=200)
 
-            return redirect("ticket-list")
+        else:
+            form = SupportTicketForm(request.POST)
+
+            if form.is_valid():
+                ticket = form.save(commit=False)
+                ticket.created_by = request.user
+                ticket.save()
+
+                if is_htmx(request):
+                    tickets = SupportTicket.objects.filter(assigned_to=request.user)
+                    return render(
+                        request,
+                        "tickets/partials/ticket_row.html",
+                        {"ticket": ticket},
+                    )
+
+                return HttpResponse(status=201)
 
     else:
-        form = SupportTicketForm()
+        form = SupportTicketForm(instance=ticket)
 
     return render(request, "tickets/partials/ticket_form.html", {"form": form})
 
@@ -74,34 +94,6 @@ def ticket_detail(request, pk):
 
 
 @login_required
-@permission_required("tickets.change_ticket", raise_exception=True)
-def ticket_update(request, pk):
-    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
-
-    if request.method == "POST":
-        form = SupportTicketForm(request.POST, instance=ticket)
-
-        if form.is_valid():
-            form.save()
-
-            if is_htmx(request):
-                return render(
-                    request,
-                    "tickets/partials/ticket_row.html",
-                    {"ticket": ticket},
-                )
-
-            return redirect("ticket-list")
-
-    else:
-        form = SupportTicketForm(instance=ticket)
-
-    return render(
-        request, "tickets/partials/ticket_form.html", {"form": form, "ticket": ticket}
-    )
-
-
-@login_required
 @permission_required("tickets.delete_ticket", raise_exception=True)
 def ticket_delete(request, pk):
     ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
@@ -117,8 +109,6 @@ def ticket_delete(request, pk):
                 {"tickets": tickets},
             )
 
-        return redirect("ticket-list")
+        return HttpResponse(status=204)
 
-    return render(
-        request, "tickets/partials/ticket_confirm_delete.html", {"ticket": ticket}
-    )
+    return HttpResponse(status=405)
