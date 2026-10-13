@@ -106,7 +106,7 @@ def ticket_update(request, pk):
 def ticket_delete(request, pk):
     ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
 
-    if request.method == "POST":
+    if request.method == "DELETE":
         ticket.delete()
 
         if is_htmx(request):
