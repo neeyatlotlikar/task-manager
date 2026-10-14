@@ -6,14 +6,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Task Manager{% endblock %}</title>
+
+    {% if request.environ.DEBUG == "True" %}
+    <!-- Development-only CDN-based css/js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    {% else %}
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
     <script src="{% static 'js/htmx.min.js' %}" defer></script>
     <script src="{% static 'js/alpine.min.js' %}" defer></script>
-
-    {% if request.environ.DEBUG == "True" %}
-    <!-- Development-only Tailwind browser build -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://unpkg.com/htmx.org@2.0.4" defer></script>
     {% endif %}
 </head>
 
