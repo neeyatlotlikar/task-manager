@@ -1,9 +1,11 @@
 {% if form.instance.pk %}
 <form hx-post="{% url 'tickets:ticket-update' form.instance.pk %}" hx-target="#ticket-{{ form.instance.pk }}"
     hx-swap="innerHTML"
+    hx-on::after-request="if (event.detail.successful) this.closest('#ticket-form-container').innerHTML = ''"
     class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
     {% else %}
-    <form hx-post="{% url 'tickets:ticket-create' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+    <form hx-post="{% url 'tickets:ticket-create' %}" hx-target="#ticket-rows" hx-swap="innerHTML"
+        hx-on::after-request="if (event.detail.successful) this.closest('#ticket-form-container').innerHTML = ''"
         class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
         {% endif %}
 
@@ -33,8 +35,9 @@
                 Save
             </button>
 
-            <button type="button" hx-get="{% url 'tickets:ticket-list' %}" hx-target="#ticket-content"
-                hx-swap="innerHTML" class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
+            <button type="button" hx-on::click="this.closest('#ticket-form-container').innerHTML = ''"
+                hx-swap="innerHTML"
+                class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
                 Cancel
             </button>
         </div>

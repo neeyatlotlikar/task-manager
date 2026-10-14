@@ -20,26 +20,15 @@ def ticket_list(request):
 
 
 @login_required
-@permission_required(
-    ["tickets.add_ticket", "tickets.change_ticket"],
-    raise_exception=True,
-)
-def ticket_create_or_update(request, pk=None):
-    ticket = (
-        get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
-        if pk
-        else None
-    )
+@permission_required(["tickets.add_ticket"], raise_exception=True)
+def ticket_create(request):
 
     if request.method == "POST":
-        form = SupportTicketForm(request.POST, instance=ticket)
+        form = SupportTicketForm(request.POST)
 
         if form.is_valid():
             ticket = form.save(commit=False)
-
-            if not ticket.pk:
-                ticket.created_by = request.user
-
+            ticket.created_by = request.user
             ticket.save()
 
             if is_htmx(request):
@@ -49,15 +38,38 @@ def ticket_create_or_update(request, pk=None):
                     {"ticket": ticket},
                 )
 
-            return redirect("tickets:ticket-list")
+        return redirect("tickets:ticket-list")
+    else:
+        form = SupportTicketForm()
+
+    return render(request, "tickets/partials/ticket_form.html", {"form": form})
+
+
+@login_required
+@permission_required("tickets.change_ticket", raise_exception=True)
+def ticket_update(request, pk):
+    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+
+    if request.method == "POST":
+        form = SupportTicketForm(request.POST, instance=ticket)
+
+        if form.is_valid():
+            form.save()
+
+            if is_htmx(request):
+                tickets = SupportTicket.objects.filter(assigned_to=request.user)
+                return render(
+                    request,
+                    "tickets/partials/ticket_list_items.html",
+                    {"tickets": tickets},
+                )
+
+        return redirect("tickets:ticket-list")
+
     else:
         form = SupportTicketForm(instance=ticket)
 
-    return render(
-        request,
-        "tickets/partials/ticket_form.html",
-        {"form": form, "ticket": ticket},
-    )
+    return render(request, "tickets/partials/ticket_form.html", {"form": form})
 
 
 @login_required
@@ -79,7 +91,7 @@ def ticket_status_update(request, pk):
                 {"ticket": ticket},
             )
 
-    return redirect("ticket-list")
+    return redirect("tickets:ticket-list")
 
 
 @login_required
