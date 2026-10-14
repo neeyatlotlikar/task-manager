@@ -49,7 +49,7 @@ def ticket_create_or_update(request, pk=None):
                     {"ticket": ticket},
                 )
 
-            return redirect("tickets:ticket-detail", pk=ticket.pk)
+            return redirect("tickets:ticket-list")
     else:
         form = SupportTicketForm(instance=ticket)
 
