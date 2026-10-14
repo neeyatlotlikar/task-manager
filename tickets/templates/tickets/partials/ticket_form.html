@@ -1,4 +1,4 @@
-<form hx-post="{% url 'tickets:ticket-create' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+<form hx-post="{% url 'tickets:ticket-update' ticket.pk %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
     class="rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
 
     {% csrf_token %}
@@ -26,8 +26,8 @@
             Save
         </button>
 
-        <button type="button" hx-get="{% url 'tickets:ticket-list' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
-            class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
+        <button type="button" hx-get="{% url 'tickets:ticket-list' %}" hx-target="#ticket-form-container"
+            hx-swap="innerHTML" class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
             Cancel
         </button>
     </div>

@@ -33,7 +33,7 @@
 
     {% if perms.tickets.delete_ticket %}
     <button hx-delete="{% url 'tickets:ticket-delete' ticket.pk %}" hx-confirm="Delete “{{ ticket.title }}”?"
-      hx-target="#ticket-{{ ticket.pk }}" hx-swap="outerHTML"
+      hx-target="#ticket-rows" hx-swap="outerHTML"
       class="ml-2 rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
       Delete
     </button>
