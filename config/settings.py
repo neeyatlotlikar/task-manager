@@ -10,9 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
-from pathlib import Path
-from dotenv import load_dotenv
 import os
+from pathlib import Path
+
+from dotenv import load_dotenv
 
 load_dotenv()  # take environment variables from .env.
 
@@ -60,6 +61,19 @@ MIDDLEWARE = [
 ROOT_URLCONF = "config.urls"
 
 TEMPLATES = [
+    {
+        "BACKEND": "django.template.backends.jinja2.Jinja2",
+        "DIRS": [BASE_DIR / "templates"],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "environment": "config.jinja2.environment",
+            "context_processors": [
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
+            ],
+        },
+    },
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         "DIRS": [BASE_DIR / "templates"],
@@ -137,6 +151,6 @@ MAILERS = {
 }
 
 LOGIN_URL = "login"
-LOGIN_REDIRECT_URL = "ticket-list"
+LOGIN_REDIRECT_URL = "tickets:ticket-list"
 LOGOUT_REDIRECT_URL = "login"
 AUTH_USER_MODEL = "accounts.User"

@@ -4,15 +4,13 @@
 <div class="flex items-center justify-between">
     <h1 class="text-2xl font-bold">Tickets</h1>
 
-    <button hx-get="{% url 'tickets:ticket-create' %}" hx-target="#ticket-form-container" hx-swap="innerHTML"
+    {% if perms.tickets.add_supportticket %}
+    <a href="{{ url('tickets:ticket-create') }}"
         class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
         New ticket
-    </button>
+    </a>
+    {% endif %}
 </div>
-
-<br>
-
-<div id="ticket-form-container" class="mt-6"></div>
 
 <div class="mt-6 overflow-hidden rounded-lg border border-slate-200 dark:border-slate-700">
     <table class="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
@@ -24,8 +22,16 @@
                 <th class="px-4 py-3"></th>
             </tr>
         </thead>
-        <tbody id="ticket-rows" class="divide-y divide-slate-200 dark:divide-slate-700">
-            {% include "tickets/partials/ticket_list_items.html" %}
+        <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
+            {% for ticket in tickets %}
+            {% include "tickets/partials/ticket_row.html" %}
+            {% else %}
+            <tr>
+                <td colspan="4" class="px-4 py-6 text-center text-slate-500">
+                    No tickets yet. Create your first one.
+                </td>
+            </tr>
+            {% endfor %}
         </tbody>
     </table>
 </div>

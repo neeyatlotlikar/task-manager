@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}{% if form.instance.pk %}Edit ticket{% else %}New ticket{% endif %} | Task Manager{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-2xl">
+    <h1 class="mb-6 text-2xl font-bold">{% if form.instance.pk %}Edit ticket{% else %}New ticket{% endif %}</h1>
+
+    {% if form.instance.pk %}
+    {% set form_action = url('tickets:ticket-update', args=[form.instance.pk]) %}
+    {% else %}
+    {% set form_action = url('tickets:ticket-create') %}
+    {% endif %}
+
+    <form method="post" action="{{ form_action }}"
+        class="space-y-5 rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+        {% for error in form.non_field_errors() %}
+        <p class="rounded-md bg-red-50 p-3 text-sm text-red-700">{{ error }}</p>
+        {% endfor %}
+
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-medium">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <p class="mt-1 text-sm text-slate-500">{{ field.help_text }}</p>
+            {% endif %}
+            {% for error in field.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <div class="flex gap-3">
+            <button type="submit" class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
+                Save ticket
+            </button>
+            <a href="{{ url('tickets:ticket-list') }}"
+                class="rounded-md border border-slate-300 px-4 py-2 text-sm dark:border-slate-600">
+                Cancel
+            </a>
+        </div>
+    </form>
+</div>
+{% endblock %}

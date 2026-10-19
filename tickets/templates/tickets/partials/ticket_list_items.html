@@ -1,9 +1,0 @@
-{% for ticket in tickets %}
-  {% include "tickets/partials/ticket_row.html" with ticket=ticket %}
-{% empty %}
-  <tr>
-    <td colspan="4" class="px-4 py-6 text-center text-slate-500">
-      No tickets yet. Create your first one.
-    </td>
-  </tr>
-{% endfor %}

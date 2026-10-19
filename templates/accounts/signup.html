@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Sign up | Task Manager{% endblock %}
+
+{% block content %}
+<div class="mx-auto max-w-md rounded-lg border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-900">
+    <h1 class="mb-6 text-xl font-bold">Create an account</h1>
+    <form method="post" action="{{ url('signup') }}" class="space-y-4">
+        <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+        {% for error in form.non_field_errors() %}
+        <p class="rounded-md bg-red-50 p-3 text-sm text-red-700">{{ error }}</p>
+        {% endfor %}
+
+        {% for field in form %}
+        <div>
+            <label for="{{ field.id_for_label }}" class="mb-1 block text-sm font-medium">{{ field.label }}</label>
+            {{ field }}
+            {% if field.help_text %}
+            <div class="mt-1 text-sm text-slate-500">{{ field.help_text|safe }}</div>
+            {% endif %}
+            {% for error in field.errors %}
+            <p class="mt-1 text-sm text-red-600">{{ error }}</p>
+            {% endfor %}
+        </div>
+        {% endfor %}
+
+        <button type="submit" class="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+            Sign up
+        </button>
+    </form>
+</div>
+{% endblock %}

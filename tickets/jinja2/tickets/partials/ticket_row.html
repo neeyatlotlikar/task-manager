@@ -1,0 +1,51 @@
+<tr id="ticket-{{ ticket.pk }}" class="bg-white dark:bg-slate-900">
+    <td class="px-4 py-3">
+        <a href="{{ url('tickets:ticket-detail', args=[ticket.pk]) }}" class="font-medium hover:underline">
+            {{ ticket.title }}
+        </a>
+    </td>
+
+    <td class="px-4 py-3">
+        <span class="inline-flex rounded-full px-2 py-1 text-xs font-medium
+            {% if ticket.status == 'completed' %}bg-green-100 text-green-800
+            {% elif ticket.status == 'inprogress' %}bg-amber-100 text-amber-800
+            {% else %}bg-slate-100 text-slate-700{% endif %}">
+            {{ ticket.get_status_display() }}
+        </span>
+    </td>
+
+    <td class="px-4 py-3 text-sm">
+        {{ ticket.updated_at.strftime("%d %b %Y") }}
+    </td>
+
+    <td class="px-4 py-3 text-right">
+        {% if perms.tickets.change_supportticket %}
+        <a href="{{ url('tickets:ticket-update', args=[ticket.pk]) }}"
+            class="rounded-md border border-slate-300 px-3 py-1 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800">
+            Edit
+        </a>
+        <form method="post" action="{{ url('tickets:ticket-status', args=[ticket.pk]) }}"
+            class="mt-2 flex justify-end gap-2">
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <label for="status-{{ ticket.pk }}" class="sr-only">Status for {{ ticket.title }}</label>
+            <select id="status-{{ ticket.pk }}" name="status"
+                class="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm">
+                {% for value, label in status_choices %}
+                <option value="{{ value }}" {% if ticket.status == value %}selected{% endif %}>{{ label }}</option>
+                {% endfor %}
+            </select>
+            <button type="submit"
+                class="rounded-md border border-slate-300 px-2 py-1 text-sm hover:bg-slate-100 dark:border-slate-600 dark:hover:bg-slate-800">
+                Update
+            </button>
+        </form>
+        {% endif %}
+
+        {% if perms.tickets.delete_supportticket %}
+        <a href="{{ url('tickets:ticket-delete', args=[ticket.pk]) }}"
+            class="ml-2 rounded-md bg-red-600 px-3 py-1 text-sm text-white hover:bg-red-700">
+            Delete
+        </a>
+        {% endif %}
+    </td>
+</tr>

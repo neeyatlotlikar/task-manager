@@ -1,8 +1,10 @@
-from django.contrib.auth import login, logout, authenticate
+from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render, redirect
+from django.shortcuts import redirect, render
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
-from .forms import SignUpForm, LoginForm
+from .forms import LoginForm, SignUpForm
 
 
 def signup_view(request):
@@ -11,7 +13,7 @@ def signup_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            return redirect("task-list")
+            return redirect("tickets:ticket-list")
     else:
         form = SignUpForm()
 
@@ -29,6 +31,13 @@ def login_view(request):
             )
             if user is not None:
                 login(request, user)
+                next_url = request.POST.get("next") or request.GET.get("next")
+                if next_url and url_has_allowed_host_and_scheme(
+                    next_url,
+                    allowed_hosts={request.get_host()},
+                    require_https=request.is_secure(),
+                ):
+                    return redirect(next_url)
                 return redirect("tickets:ticket-list")
             form.add_error(None, "Invalid username or password.")
     else:
@@ -38,6 +47,7 @@ def login_view(request):
 
 
 @login_required
+@require_POST
 def logout_view(request):
     logout(request)
     return redirect("login")
