@@ -103,6 +103,9 @@ uv run python manage.py check
 # Create migrations after changing models, then apply them.
 uv run python manage.py makemigrations
 uv run python manage.py migrate
+
+# Custom test users creation script for various scenarios.
+uv run python manage.py create_test_users
 ```
 
 ### Python lint
@@ -143,6 +146,8 @@ uv lock --check
   role (`admin`, `manager`, or `member`) and creation/update timestamps.
 - After login or signup, users go to the ticket list unless login supplied a
   valid local `next` URL. External redirect URLs are not accepted.
+- Custom test users creation script `accounts/management/commands/create_test_users.py`
+  for testing various user type scenarios to be invoked from django's `manage.py`.
 
 ### Tickets
 

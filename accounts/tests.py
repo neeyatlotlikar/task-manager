@@ -27,7 +27,9 @@ class AuthenticationPageTests(TestCase):
             },
         )
 
-        self.assertRedirects(response, "/tickets/create/", fetch_redirect_response=False)
+        self.assertRedirects(
+            response, "/tickets/create/", fetch_redirect_response=False
+        )
 
     def test_external_next_url_is_ignored(self):
         User.objects.create_user(username="login-user", password="test-password-123")
@@ -44,7 +46,9 @@ class AuthenticationPageTests(TestCase):
         self.assertRedirects(response, "/")
 
     def test_logout_uses_post(self):
-        user = User.objects.create_user(username="logout-user", password="test-password-123")
+        user = User.objects.create_user(
+            username="logout-user", password="test-password-123"
+        )
         self.client.force_login(user)
 
         self.assertEqual(self.client.get("/accounts/logout/").status_code, 405)
