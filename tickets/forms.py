@@ -3,6 +3,7 @@ from typing import ClassVar
 from django import forms
 
 from .models import SupportTicket
+from accounts.models import User
 
 
 class SupportTicketForm(forms.ModelForm):
@@ -34,6 +35,31 @@ class SupportTicketForm(forms.ModelForm):
                 }
             ),
         }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if user is None:
+            raise ValueError("SupportTicketForm requires an authenticated user.")
+
+        self.fields["assigned_to"].queryset = self.get_assignable_users(
+            user, self.instance
+        )
+
+    @staticmethod
+    def get_assignable_users(user: User, instance: SupportTicket | None = None):
+        if user.role == "member":
+            return User.objects.filter(pk=user.pk)
+
+        if user.role in {"manager", "admin"}:
+            queryset = User.objects.filter(role="member")
+
+            if instance and instance.assigned_to:
+                queryset = queryset | User.objects.filter(pk=instance.assigned_to_id)
+
+            return queryset.distinct()
+
+        return User.objects.none()
 
 
 class SupportTicketStatusForm(forms.ModelForm):
