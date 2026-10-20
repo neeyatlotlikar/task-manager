@@ -46,8 +46,8 @@ def ticket_create(request):
 def ticket_update(request, pk):
     ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
 
-    if request.user.role == "member" and ticket.created_by != request.user:
-        return redirect("tickets:ticket_list")
+    if request.user.role == "member" and ticket.assigned_to_id != request.user.pk:
+        return redirect("tickets:ticket-list")
 
     if request.method == "POST":
         form = SupportTicketForm(request.POST, instance=ticket, user=request.user)

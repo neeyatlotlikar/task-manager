@@ -88,6 +88,7 @@ uv run python manage.py runserver
 uv run python manage.py migrate
 
 # Create an administrator account.
+# Note: Remember to assign role from the admin panel.
 uv run python manage.py createsuperuser
 
 # Run all Django tests.
