@@ -59,6 +59,16 @@ TEST_USERS = [
         "is_staff": False,
         "is_superuser": False,
     },
+    {
+        "username": "test_member4",
+        "first_name": "Test",
+        "last_name": "Member4",
+        "email": "test_member4@example.com",
+        "password": "MemberPass123!",
+        "role": "member",
+        "is_staff": False,
+        "is_superuser": False,
+    },
 ]
 
 
@@ -128,6 +138,8 @@ class Command(BaseCommand):
                 defaults={
                     "email": user_data["email"],
                     "role": user_data["role"],
+                    "first_name": user_data["first_name"],
+                    "last_name": user_data["last_name"],
                     "is_staff": user_data["is_staff"],
                     "is_superuser": user_data["is_superuser"],
                 },
