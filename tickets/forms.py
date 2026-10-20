@@ -54,7 +54,7 @@ class SupportTicketForm(forms.ModelForm):
         if user.role in {"manager", "admin"}:
             queryset = User.objects.filter(role="member")
 
-            if instance and instance.assigned_to:
+            if instance and instance.assigned_to_id:
                 queryset = queryset | User.objects.filter(pk=instance.assigned_to_id)
 
             return queryset.distinct()
