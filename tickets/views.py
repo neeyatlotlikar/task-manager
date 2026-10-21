@@ -105,7 +105,7 @@ def ticket_delete(request, pk):
         ticket = get_object_or_404(SupportTicket, pk=pk)
 
     if request.user.role == "member" and ticket.created_by != request.user:
-        return redirect("tickets:ticket_list")
+        return redirect("tickets:ticket-list")
 
     if request.method == "POST":
         ticket.delete()
