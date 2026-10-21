@@ -6,16 +6,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tickets', '0004_supportticket_created_by'),
+        ("tickets", "0004_supportticket_created_by"),
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='supportticket',
-            name='created_by',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, related_name='created_tickets', to=settings.AUTH_USER_MODEL),
+            model_name="supportticket",
+            name="created_by",
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="created_tickets",
+                to=settings.AUTH_USER_MODEL,
+            ),
         ),
     ]
