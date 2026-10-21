@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from django.db import models
 
 from config import settings
@@ -33,7 +35,7 @@ class SupportTicket(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
-        ordering = ["-created_at"]
+        ordering: ClassVar = ["-created_at"]
 
     def __str__(self):
         return self.title

@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# echo "==> Ruff lint"
-# uv run ruff check .
+echo "==> Ruff lint"
+uv run ruff check .
 
 echo "==> Ruff format check"
 uv run ruff format --check .
