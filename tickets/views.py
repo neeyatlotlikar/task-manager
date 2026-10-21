@@ -1,3 +1,5 @@
+import logging
+
 from django.contrib.auth.decorators import login_required, permission_required
 from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
@@ -5,6 +7,8 @@ from django.views.decorators.http import require_POST
 
 from .forms import SupportTicketForm, SupportTicketStatusForm
 from .models import SupportTicket
+
+logger = logging.getLogger(__name__)
 
 
 @login_required
@@ -36,6 +40,7 @@ def ticket_create(request):
             ticket = form.save(commit=False)
             ticket.created_by = request.user
             ticket.save()
+            logger.info("Ticket created (id=%s).", ticket.pk)
             return redirect("tickets:ticket-list")
     else:
         form = SupportTicketForm(user=request.user)
@@ -58,6 +63,7 @@ def ticket_update(request, pk):
         form = SupportTicketForm(request.POST, instance=ticket, user=request.user)
         if form.is_valid():
             form.save()
+            logger.info("Ticket updated (id=%s).", ticket.pk)
             return redirect("tickets:ticket-detail", pk=ticket.pk)
     else:
         form = SupportTicketForm(instance=ticket, user=request.user)
@@ -77,6 +83,7 @@ def ticket_status_update(request, pk):
     if not form.is_valid():
         return HttpResponseBadRequest("Invalid ticket status.")
     form.save()
+    logger.info("Ticket status updated (id=%s).", ticket.pk)
     return redirect("tickets:ticket-list")
 
 
@@ -109,5 +116,6 @@ def ticket_delete(request, pk):
 
     if request.method == "POST":
         ticket.delete()
+        logger.info("Ticket deleted (id=%s).", pk)
         return redirect("tickets:ticket-list")
     return render(request, "tickets/ticket_confirm_delete.html", {"ticket": ticket})

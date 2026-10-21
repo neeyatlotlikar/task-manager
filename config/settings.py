@@ -141,6 +141,61 @@ STATICFILES_DIRS = [BASE_DIR / "static"]
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
 
+# Keep request threads free of file and console I/O while preserving records for
+# the background listener.
+LOGGING = {
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "verbose": {
+            "format": (
+                "%(asctime)s %(levelname)s [%(name)s] "
+                "%(pathname)s:%(lineno)d %(message)s"
+            ),
+        },
+    },
+    "handlers": {
+        "queue": {
+            "()": "config.logging.NonBlockingQueueHandler",
+            "filename": BASE_DIR / "logs" / "application.log",
+            "formatter": "verbose",
+            "level": "DEBUG",
+        },
+    },
+    "loggers": {
+        "django": {
+            "handlers": ["queue"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "django.request": {
+            "handlers": ["queue"],
+            "level": "ERROR",
+            "propagate": False,
+        },
+        "django.server": {
+            "handlers": ["queue"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "accounts": {
+            "handlers": ["queue"],
+            "level": "INFO",
+            "propagate": False,
+        },
+        "tickets": {
+            "handlers": ["queue"],
+            "level": "INFO",
+            "propagate": False,
+        },
+    },
+    "root": {
+        "handlers": ["queue"],
+        "level": "INFO",
+    },
+}
+
+
 # Email
 # https://docs.djangoproject.com/en/6.1/topics/email/#topic-email-configuration
 
