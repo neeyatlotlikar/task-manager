@@ -9,7 +9,14 @@ from .models import SupportTicket
 
 @login_required
 def ticket_list(request):
-    tickets = SupportTicket.objects.filter(assigned_to=request.user)
+    if request.user.role == "member":
+        tickets = SupportTicket.objects.filter(assigned_to=request.user).order_by(
+            "-created_at"
+        )
+    else:
+        tickets = SupportTicket.objects.filter(assigned_to__role="member").order_by(
+            "-created_at"
+        )
     return render(
         request,
         "tickets/ticket_list.html",
@@ -24,12 +31,14 @@ def ticket_list(request):
 @permission_required("tickets.add_supportticket", raise_exception=True)
 def ticket_create(request):
     if request.method == "POST":
-        form = SupportTicketForm(request.POST)
+        form = SupportTicketForm(request.POST, user=request.user)
         if form.is_valid():
-            form.save()
+            ticket = form.save(commit=False)
+            ticket.created_by = request.user
+            ticket.save()
             return redirect("tickets:ticket-list")
     else:
-        form = SupportTicketForm()
+        form = SupportTicketForm(user=request.user)
 
     return render(request, "tickets/ticket_form.html", {"form": form})
 
@@ -37,14 +46,21 @@ def ticket_create(request):
 @login_required
 @permission_required("tickets.change_supportticket", raise_exception=True)
 def ticket_update(request, pk):
-    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    if request.user.role == "member":
+        ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    else:
+        ticket = get_object_or_404(SupportTicket, pk=pk)
+
+    if request.user.role == "member" and ticket.assigned_to_id != request.user.pk:
+        return redirect("tickets:ticket-list")
+
     if request.method == "POST":
-        form = SupportTicketForm(request.POST, instance=ticket)
+        form = SupportTicketForm(request.POST, instance=ticket, user=request.user)
         if form.is_valid():
             form.save()
             return redirect("tickets:ticket-detail", pk=ticket.pk)
     else:
-        form = SupportTicketForm(instance=ticket)
+        form = SupportTicketForm(instance=ticket, user=request.user)
 
     return render(request, "tickets/ticket_form.html", {"form": form})
 
@@ -53,7 +69,10 @@ def ticket_update(request, pk):
 @permission_required("tickets.change_supportticket", raise_exception=True)
 @require_POST
 def ticket_status_update(request, pk):
-    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    if request.user.role == "member":
+        ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    else:
+        ticket = get_object_or_404(SupportTicket, pk=pk)
     form = SupportTicketStatusForm(request.POST, instance=ticket)
     if not form.is_valid():
         return HttpResponseBadRequest("Invalid ticket status.")
@@ -63,7 +82,10 @@ def ticket_status_update(request, pk):
 
 @login_required
 def ticket_detail(request, pk):
-    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    if request.user.role == "member":
+        ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    else:
+        ticket = get_object_or_404(SupportTicket, pk=pk)
     return render(
         request,
         "tickets/ticket_detail.html",
@@ -77,7 +99,14 @@ def ticket_detail(request, pk):
 @login_required
 @permission_required("tickets.delete_supportticket", raise_exception=True)
 def ticket_delete(request, pk):
-    ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    if request.user.role == "member":
+        ticket = get_object_or_404(SupportTicket, pk=pk, assigned_to=request.user)
+    else:
+        ticket = get_object_or_404(SupportTicket, pk=pk)
+
+    if request.user.role == "member" and ticket.created_by != request.user:
+        return redirect("tickets:ticket-list")
+
     if request.method == "POST":
         ticket.delete()
         return redirect("tickets:ticket-list")

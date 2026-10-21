@@ -22,6 +22,12 @@ class SupportTicket(models.Model):
         max_length=20,
         choices=TICKET_STATUS_CHOICES,
     )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="created_tickets",
+        default=None,
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

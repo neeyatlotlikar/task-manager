@@ -11,6 +11,8 @@ User = get_user_model()
 TEST_USERS = [
     {
         "username": "test_admin",
+        "first_name": "Test",
+        "last_name": "Admin",
         "email": "test_admin@example.com",
         "password": "AdminPass123!",
         "role": "admin",
@@ -19,6 +21,8 @@ TEST_USERS = [
     },
     {
         "username": "test_manager",
+        "first_name": "Test",
+        "last_name": "Manager",
         "email": "test_manager@example.com",
         "password": "ManagerPass123!",
         "role": "manager",
@@ -27,6 +31,8 @@ TEST_USERS = [
     },
     {
         "username": "test_member",
+        "first_name": "Test",
+        "last_name": "Member",
         "email": "test_member@example.com",
         "password": "MemberPass123!",
         "role": "member",
@@ -35,7 +41,29 @@ TEST_USERS = [
     },
     {
         "username": "test_member2",
+        "first_name": "Test",
+        "last_name": "Member2",
         "email": "test_member2@example.com",
+        "password": "MemberPass123!",
+        "role": "member",
+        "is_staff": False,
+        "is_superuser": False,
+    },
+    {
+        "username": "test_member3",
+        "first_name": "Test",
+        "last_name": "Member3",
+        "email": "test_member3@example.com",
+        "password": "MemberPass123!",
+        "role": "member",
+        "is_staff": False,
+        "is_superuser": False,
+    },
+    {
+        "username": "test_member4",
+        "first_name": "Test",
+        "last_name": "Member4",
+        "email": "test_member4@example.com",
         "password": "MemberPass123!",
         "role": "member",
         "is_staff": False,
@@ -110,6 +138,8 @@ class Command(BaseCommand):
                 defaults={
                     "email": user_data["email"],
                     "role": user_data["role"],
+                    "first_name": user_data["first_name"],
+                    "last_name": user_data["last_name"],
                     "is_staff": user_data["is_staff"],
                     "is_superuser": user_data["is_superuser"],
                 },
