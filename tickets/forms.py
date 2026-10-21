@@ -2,8 +2,9 @@ from typing import ClassVar
 
 from django import forms
 
-from .models import SupportTicket
 from accounts.models import User
+
+from .models import SupportTicket
 
 
 class SupportTicketForm(forms.ModelForm):
