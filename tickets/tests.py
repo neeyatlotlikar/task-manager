@@ -29,6 +29,7 @@ class TicketPageTests(TestCase):
             description="Ticket details",
             status="todo",
             assigned_to=self.user,
+            created_by=self.user,
         )
 
     def test_ticket_list_is_a_server_rendered_page(self):

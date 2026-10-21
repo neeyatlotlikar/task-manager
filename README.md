@@ -118,6 +118,42 @@ Ruff is part of the `uv` development dependency group:
 uv run ruff check accounts config tickets
 ```
 
+### Application logging
+
+Application logs are handled asynchronously so console and file I/O do not
+block Django request handling. Records at `INFO` and above are written to the
+server console and to the rotating `logs/application.log` file; each file is
+limited to 5 MiB, with up to five backups. The `logs/` directory is created
+automatically and is ignored by Git.
+
+Use a module-named logger in application code so records identify their Django
+app and module:
+
+```python
+import logging
+
+logger = logging.getLogger(__name__)
+```
+
+For handled exceptions, log the traceback at the point where the exception is
+caught and keep the user-facing response generic:
+
+```python
+try:
+    perform_operation()
+except SpecificError:
+    logger.exception("Operation failed.")
+    # Return or render the appropriate error response.
+```
+
+The log format includes the timestamp, severity, logger name, source file, and
+line number. `logger.exception(...)` additionally records the exception
+traceback and its originating file and line. Let unexpected errors propagate
+to Django's normal error handling rather than swallowing them: production
+deployments should set `DEBUG=False` so users receive a generic server error
+while the traceback is retained in the logs. Logging is asynchronous, but
+application failures are not reported as successful operations.
+
 ### Python dependencies
 
 Add or remove Python dependencies with `uv`, not `pip`. For example:
