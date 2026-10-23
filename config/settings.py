@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "accounts",
     "tickets",
     "import_export",
+    "simple_history",
 ]
 
 MIDDLEWARE = [
@@ -57,6 +58,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "simple_history.middleware.HistoryRequestMiddleware",
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -210,3 +212,6 @@ LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "tickets:ticket-list"
 LOGOUT_REDIRECT_URL = "login"
 AUTH_USER_MODEL = "accounts.User"
+
+# Simple History settings
+SIMPLE_HISTORY_ENFORCE_HISTORY_MODEL_PERMISSIONS = True

@@ -1,6 +1,7 @@
 from typing import ClassVar
 
 from django.db import models
+from simple_history.models import HistoricalRecords
 
 from config import settings
 
@@ -16,7 +17,7 @@ class SupportTicket(models.Model):
     title = models.CharField(max_length=200)
     assigned_to = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="tickets",
         default=None,
     )
@@ -27,12 +28,14 @@ class SupportTicket(models.Model):
     )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name="created_tickets",
         default=None,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    history = HistoricalRecords()
 
     class Meta:
         ordering: ClassVar = ["-created_at"]

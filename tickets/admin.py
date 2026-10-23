@@ -50,3 +50,32 @@ class SupportTicketsAdmin(ExportMixin, admin.ModelAdmin):
             kwargs["end_date"] = export_form.cleaned_data.get("end_date")
 
         return kwargs
+
+
+@admin.register(SupportTicket.history.model)
+class HistoricalSupportTicketAdmin(admin.ModelAdmin):
+    list_display = (
+        "id",
+        "title",
+        "history_type",
+        "history_user",
+        "history_date",
+        "assigned_to",
+    )
+    list_filter = ("history_type", "status", "assigned_to", "created_at", "updated_at")
+    search_fields = (
+        "title",
+        "description",
+    )
+    readonly_fields: ClassVar = [
+        field.name for field in SupportTicket.history.model._meta.fields
+    ]
+
+    def has_add_permission(self, request):
+        return False
+
+    def has_change_permission(self, request, obj=None):
+        return False
+
+    def has_delete_permission(self, request, obj=None):
+        return False
