@@ -1,7 +1,7 @@
 import logging
 
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required, permission_required
-from django.http import HttpResponseBadRequest
 from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
@@ -41,6 +41,7 @@ def ticket_create(request):
             ticket.created_by = request.user
             ticket.save()
             logger.info("Ticket created (id=%s).", ticket.pk)
+            messages.success(request, "Ticket created successfully.")
             return redirect("tickets:ticket-list")
     else:
         form = SupportTicketForm(user=request.user)
@@ -57,6 +58,7 @@ def ticket_update(request, pk):
         ticket = get_object_or_404(SupportTicket, pk=pk)
 
     if request.user.role == "member" and ticket.assigned_to_id != request.user.pk:
+        messages.error(request, "You are not allowed to update this ticket.")
         return redirect("tickets:ticket-list")
 
     if request.method == "POST":
@@ -81,9 +83,11 @@ def ticket_status_update(request, pk):
         ticket = get_object_or_404(SupportTicket, pk=pk)
     form = SupportTicketStatusForm(request.POST, instance=ticket)
     if not form.is_valid():
-        return HttpResponseBadRequest("Invalid ticket status.")
+        messages.error(request, "Invalid ticket status")
+        return redirect("tickets:ticket-list", pk=pk)
     form.save()
     logger.info("Ticket status updated (id=%s).", ticket.pk)
+    messages.success(request, "Ticket status updated successfully.")
     return redirect("tickets:ticket-list")
 
 
@@ -112,10 +116,12 @@ def ticket_delete(request, pk):
         ticket = get_object_or_404(SupportTicket, pk=pk)
 
     if request.user.role == "member" and ticket.created_by != request.user:
+        messages.error(request, "You are not allowed to delete this ticket.")
         return redirect("tickets:ticket-list")
 
     if request.method == "POST":
         ticket.delete()
+        messages.success(request, "Ticket deleted successfully.")
         logger.info("Ticket deleted (id=%s).", pk)
         return redirect("tickets:ticket-list")
     return render(request, "tickets/ticket_confirm_delete.html", {"ticket": ticket})
