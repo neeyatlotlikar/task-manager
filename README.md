@@ -250,8 +250,12 @@ development data and is ignored by Git.
 ## Tests
 
 The test suite uses Django's built-in test runner and a temporary test
-database. It covers server-rendered ticket and authentication pages, ticket
-creation/editing/status/deletion, login redirects, and POST-only logout.
+database. It covers server-rendered ticket and authentication pages, signup and
+login validation, the local redirect guard, POST-only logout, ticket
+creation/editing/status/deletion, member-only ticket visibility, and invalid
+status/form validation paths. The suite also exercises the role-aware
+assignment rules used by members, managers, and administrators.
+
 Run the complete suite with:
 
 ```sh

@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Permission
 from django.test import TestCase
 
+from .forms import SupportTicketForm
 from .models import SupportTicket
 
 User = get_user_model()
@@ -39,6 +40,79 @@ class TicketPageTests(TestCase):
         self.assertContains(response, "Test ticket")
         self.assertContains(response, "New ticket")
         self.assertNotContains(response, "hx-")
+
+    def test_member_only_sees_their_own_assigned_tickets(self):
+        other_member = User.objects.create_user(
+            username="other-member",
+            password="test-password-123",
+            role="member",
+        )
+        other_ticket = SupportTicket.objects.create(
+            title="Other member ticket",
+            description="Assigned elsewhere",
+            status="todo",
+            assigned_to=other_member,
+            created_by=other_member,
+        )
+
+        response = self.client.get("/")
+
+        self.assertContains(response, "Test ticket")
+        self.assertNotContains(response, other_ticket.title)
+
+    def test_manager_form_only_lists_member_users_for_assignment(self):
+        manager = User.objects.create_user(
+            username="manager-user",
+            password="test-password-123",
+            role="manager",
+        )
+        member = User.objects.create_user(
+            username="member-user",
+            password="test-password-123",
+            role="member",
+        )
+        admin = User.objects.create_user(
+            username="admin-user",
+            password="test-password-123",
+            role="admin",
+        )
+
+        form = SupportTicketForm(user=manager)
+        assigned_user_ids = list(
+            form.fields["assigned_to"].queryset.values_list("pk", flat=True)
+        )
+
+        self.assertIn(member.pk, assigned_user_ids)
+        self.assertNotIn(manager.pk, assigned_user_ids)
+        self.assertNotIn(admin.pk, assigned_user_ids)
+
+    def test_member_cannot_access_other_users_ticket_details(self):
+        other_member = User.objects.create_user(
+            username="blocked-member",
+            password="test-password-123",
+            role="member",
+        )
+        other_ticket = SupportTicket.objects.create(
+            title="Blocked ticket",
+            description="Not assigned to this user",
+            status="todo",
+            assigned_to=other_member,
+            created_by=other_member,
+        )
+
+        response = self.client.get(f"/tickets/{other_ticket.pk}/")
+
+        self.assertEqual(response.status_code, 404)
+
+    def test_invalid_status_submission_is_rejected_without_updating_ticket(self):
+        response = self.client.post(
+            f"/tickets/{self.ticket.pk}/status/",
+            {"status": "invalid-status"},
+        )
+
+        self.assertRedirects(response, "/")
+        self.ticket.refresh_from_db()
+        self.assertEqual(self.ticket.status, "todo")
 
     def test_create_ticket_get_and_post(self):
         response = self.client.get("/tickets/create/")

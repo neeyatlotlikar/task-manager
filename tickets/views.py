@@ -84,7 +84,7 @@ def ticket_status_update(request, pk):
     form = SupportTicketStatusForm(request.POST, instance=ticket)
     if not form.is_valid():
         messages.error(request, "Invalid ticket status")
-        return redirect("tickets:ticket-list", pk=pk)
+        return redirect("tickets:ticket-list")
     form.save()
     logger.info("Ticket status updated (id=%s).", ticket.pk)
     messages.success(request, "Ticket status updated successfully.")

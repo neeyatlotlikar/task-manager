@@ -15,6 +15,23 @@ class AuthenticationPageTests(TestCase):
         self.assertEqual(signup_response.status_code, 200)
         self.assertContains(signup_response, "Create an account")
 
+    def test_signup_creates_user_and_marks_them_as_logged_in(self):
+        response = self.client.post(
+            "/accounts/signup/",
+            {
+                "username": "new-user",
+                "email": "new@example.com",
+                "role": "member",
+                "password1": "test-password-123",
+                "password2": "test-password-123",
+            },
+        )
+
+        self.assertRedirects(response, "/")
+        user = User.objects.get(username="new-user")
+        self.assertEqual(user.role, "member")
+        self.assertTrue(user.is_authenticated)
+
     def test_login_honors_a_local_next_url(self):
         User.objects.create_user(username="login-user", password="test-password-123")
 
@@ -30,6 +47,15 @@ class AuthenticationPageTests(TestCase):
         self.assertRedirects(
             response, "/tickets/create/", fetch_redirect_response=False
         )
+
+    def test_login_rejects_invalid_credentials(self):
+        response = self.client.post(
+            "/accounts/login/",
+            {"username": "missing-user", "password": "wrong-password"},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Invalid username or password.")
 
     def test_external_next_url_is_ignored(self):
         User.objects.create_user(username="login-user", password="test-password-123")
